@@ -5,7 +5,7 @@ public class MovingViolationsManagerView {
 	public void printMenu() {
 		System.out.println("---------ISIS 1206 - Estructuras de datos----------");
 		System.out.println("---------------------Proyecto 3----------------------");
-		System.out.println("0. Cargar el Grafo No Dirigido de la malla vial: Downtown o Ciudad Completa");
+		System.out.println("0. Cargar el Grafo No Dirigido (grafo más grande) de la malla vial de la ciudad completa de Washington D.C.");
 		
 		System.out.println("1. Encontrar el camino de costo mínimo para un viaje entre  dos vertices.. (REQ 1A)");
 		System.out.println("2. Determinar los n vértices con mayor número de infracciones y sus componentes conectadas (REQ 2A)");

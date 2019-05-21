@@ -1,8 +1,17 @@
 package controller;
 
+import java.io.BufferedReader; 
+import java.io.FileReader;
+import java.util.Comparator;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
+import com.teamdev.jxmaps.LatLng;
+
+import model.utils.*;
+import model.data_structures.*;
 import view.MovingViolationsManagerView;
+import model.vo.*;
 
 public class Controller {
 
@@ -10,7 +19,8 @@ public class Controller {
 	private MovingViolationsManagerView view;
 
 	//TODO Definir los atributos de estructuras de datos del modelo del mundo del proyecto
-
+	private Graph<Long,Intersection,Way> grafo;
+	private ArregloDinamico<Long> vertices;
 
 	/**
 	 * Metodo constructor
@@ -18,12 +28,15 @@ public class Controller {
 	public Controller()
 	{
 		view = new MovingViolationsManagerView();
+		grafo = new Graph<Long,Intersection,Way>();
+		vertices = new ArregloDinamico<Long>(746000);
 	}
 
 	/**
 	 * Metodo encargado de ejecutar los  requerimientos segun la opcion indicada por el usuario
 	 */
-	public void run(){
+	public void run()
+	{
 
 		long startTime;
 		long endTime;
@@ -50,7 +63,7 @@ public class Controller {
 				if(ruta == 1)
 					RutaArchivo = ""; //TODO Dar la ruta del archivo de Downtown
 				else
-					RutaArchivo = ""; //TODO Dar la ruta del archivo de la ciudad completa
+					RutaArchivo = "./data/finalGraph.json"; //TODO Dar la ruta del archivo de la ciudad completa
 
 				startTime = System.currentTimeMillis();
 				loadJSON(RutaArchivo);
@@ -69,7 +82,7 @@ public class Controller {
 				view.printMessage("Ingrese El id del segundo vertice (Ej. 901839): ");
 				idVertice2 = sc.nextInt();
 
-				
+
 				startTime = System.currentTimeMillis();
 				caminoCostoMinimoA1(idVertice1, idVertice2);
 				endTime = System.currentTimeMillis();
@@ -88,7 +101,7 @@ public class Controller {
 				view.printMessage("2A. Consultar los N vï¿½rtices con mayor nï¿½mero de infracciones. Ingrese el valor de N: ");
 				int n = sc.nextInt();
 
-				
+
 				startTime = System.currentTimeMillis();
 				mayorNumeroVerticesA2(n);
 				endTime = System.currentTimeMillis();
@@ -112,7 +125,7 @@ public class Controller {
 				view.printMessage("Ingrese El id del segundo vertice (Ej. 901839): ");
 				idVertice2 = sc.nextInt();
 
-				
+
 				startTime = System.currentTimeMillis();
 				caminoLongitudMinimoaB1(idVertice1, idVertice2);
 				endTime = System.currentTimeMillis();
@@ -146,7 +159,7 @@ public class Controller {
 				view.printMessage("Ingrese el nï¿½mero de filas");
 				int filas = sc.nextInt();
 
-				
+
 				startTime = System.currentTimeMillis();
 				definirCuadriculaB2(lonMin,lonMax,latMin,latMax,columnas,filas);
 				endTime = System.currentTimeMillis();
@@ -163,7 +176,7 @@ public class Controller {
 				break;
 
 			case 5:
-				
+
 				startTime = System.currentTimeMillis();
 				arbolMSTKruskalC1();
 				endTime = System.currentTimeMillis();
@@ -179,7 +192,7 @@ public class Controller {
 				break;
 
 			case 6:
-				
+
 				startTime = System.currentTimeMillis();
 				arbolMSTPrimC2();
 				endTime = System.currentTimeMillis();
@@ -194,7 +207,7 @@ public class Controller {
 				break;
 
 			case 7:
-				
+
 				startTime = System.currentTimeMillis();
 				caminoCostoMinimoDijkstraC3();
 				endTime = System.currentTimeMillis();
@@ -213,7 +226,7 @@ public class Controller {
 				idVertice1 = sc.nextInt();
 				view.printMessage("Ingrese El id del segundo vertice (Ej. 901839): ");
 				idVertice2 = sc.nextInt();
-				
+
 				startTime = System.currentTimeMillis();
 				caminoMasCortoC4(idVertice1, idVertice2);
 				endTime = System.currentTimeMillis();
@@ -233,9 +246,9 @@ public class Controller {
 			}
 		}
 	}
-	
-	
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+
+
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 
 
 	/**
@@ -245,32 +258,156 @@ public class Controller {
 
 	public void loadJSON(String rutaArchivo) 
 	{
-		// TODO Auto-generated method stub
+		try
+		{
+			Gson gson=new Gson();
+			BufferedReader br = new BufferedReader(new FileReader(rutaArchivo));
+			Intersection[] actual =  gson.fromJson(br, Intersection[].class);
+			for (int i = 0; i < actual.length; i++) 
+			{
+				grafo.addVertex(actual[i].getId(),actual[i]);
+				vertices.agregar(actual[i].getId());
+			}
+			crearArcos();
+			view.printMessage("Se cargaron: "+grafo.E()+" arcos y "+grafo.V()+" vertices" );	
+		}
+
+		catch(Exception e)
+		{ 
+			e.printStackTrace(); 
+		}
+
 	}
 
+	public void crearArcos()
+	{
+		for (int i =0;i<vertices.darTamano();i++)
+		{
+			Intersection vActual=grafo.getInfoVertex(vertices.darElemento(i));
+			for (Long adyacente : vActual.getAdj()) 
+			{
+				if(grafo.getInfoArc(vActual.getId(), adyacente)==null)
+				{
+					Intersection I1=grafo.getInfoVertex(vActual.getId());
+					Intersection I2=grafo.getInfoVertex(adyacente);
+					grafo.addEdge(vActual.getId(),adyacente,new Way(Haversine.distance(I1.getLat(),I1.getLon(),I2.getLat(),I2.getLon())));
+				}
+			}
+		}
+	}
+	private LinearHash<Long, Edge<Way>>  edgeTo; 
+	private LinearHash<Long, Vertex<Long, Intersection, Way>> verticesPunto; 
+	private double[] disTo; 
+	private ColaPrioridad<Vertex<Long, Intersection, Way>> cola;
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 1A: Encontrar el camino de costo mï¿½nimo para un viaje entre dos ubicaciones geogrï¿½ficas.
 	 * @param idVertice2 
 	 * @param idVertice1 
 	 */
-	public void caminoCostoMinimoA1(int idVertice1, int idVertice2) {
+	public void caminoCostoMinimoA1(long idVertice1, long idVertice2) {
 		// TODO Auto-generated method stub
+		System.out.println(grafo.getInfoVertex(new Long(50251648)).getId());
+
+		edgeTo = new LinearHash<>(grafo.V());
+		verticesPunto = grafo.getVertex(); 
+
+		cola = new ColaPrioridad<>(new comparatorVertex());
+		disTo = new double[verticesPunto.darCapacidad()]; 
+		for(int i = 0; i <disTo.length; i++)
+		{
+			disTo[i] = Integer.MAX_VALUE; 
+		}
+		Vertex<Long, Intersection,Way > vertice = verticesPunto.get(idVertice1);
+		disTo[verticesPunto.getI(idVertice1)] = 0; 
+
+		cola.agregar(vertice);
+		while(!cola.esVacia())
+		{
+			Vertex<Long, Intersection, Way> v = cola.delMax();
+			ArregloDinamico<Edge<Way>> adyacentes = v.getAdjEdges();
+			for(int i = 0; i < adyacentes.darTamano(); i++)
+			{
+				relax(adyacentes.darElemento(i), v);
+			}
+
+		}	
+		Mapa mapa = new Mapa("Punto A1");
+		Vertex< Long, Intersection, Way> actual = verticesPunto.get(idVertice2); 
+		while(actual.getId() != vertice.getId())
+		{
+			Vertex<Long, Intersection, Way> v2; 
+			Edge<Way> arco = edgeTo.get(actual.getId()); 
+			if(actual.getId() == arco.getV1().getId())
+			{
+				v2 = arco.getV2();
+			}
+			else
+			{
+				v2 = arco.getV1();
+			}
+			mapa.generateCircle(new LatLng(actual.getInfo().getLat(), actual.getInfo().getLon()));
+			mapa.generateCircle(new LatLng(v2.getInfo().getLat(), v2.getInfo().getLon()));
+			Intersection uno = actual.getInfo(); 
+			Intersection dos = v2.getInfo();
+			mapa.generateSimplePath(new LatLng(uno.getLat(), uno.getLon()), new LatLng(dos.getLat(),dos.getLon()), false);
+
+		}
+
+
 	}
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+	private void relax(Edge<Way> e, Vertex<Long, Intersection, Way> v)
+	{
+		Vertex<Long, Intersection, Way> w; 
+		if(e.getV1().equals(v))
+		{
+			w = e.getV2();
+		}
+		else
+		{
+			w = e.getV1(); 
+		}
+		if(disTo[verticesPunto.getI(w.getId())] > disTo[verticesPunto.getI(v.getId())] + v.getInfo().getInfractions().length)
+		{
+			disTo[verticesPunto.getI(w.getId())] = disTo[verticesPunto.getI(v.getId())] + v.getInfo().getInfractions().length;
+			edgeTo.put(w.getId(), e);
+			if(!cola.contains(w))
+			{
+				cola.agregar(w);
+			}
+
+		}
+	}
+	public class comparatorVertex implements Comparator<Vertex<Long, Intersection, Way>>
+	{
+
+		public int compare(Vertex<Long, Intersection, Way> o1, Vertex<Long, Intersection, Way> o2) {
+			// TODO Auto-generated method stub
+			return o1.getInfo().getInfractions().length - o2.getInfo().getAdj().length;
+		}
+
+	}
+
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia 
 	/**
 	 * Requerimiento 2A: Determinar los n vï¿½rtices con mayor nï¿½mero de infracciones. Adicionalmente identificar las
 	 * componentes conectadas (subgrafos) que se definan ï¿½nicamente entre estos n vï¿½rtices
 	 * @param  int n: numero de vertices con mayor numero de infracciones  
 	 */
 	public void mayorNumeroVerticesA2(int n) {
+		LinearHash<Long, Vertex<Long, Intersection, Way>> tabla =   grafo.getVertex(); 
+		ArregloDinamico<Vertex<Long, Intersection, Way>> vertices = tabla.getValues();
+
+
+
 		// TODO Auto-generated method stub
 
 	}
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 1B: Encontrar el camino mï¿½s corto para un viaje entre dos ubicaciones geogrï¿½ficas 
 	 * @param idVertice2 
@@ -281,7 +418,7 @@ public class Controller {
 
 	}
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 2B:  Definir una cuadricula regular de N columnas por M filas. que incluya las longitudes y latitudes dadas
 	 * @param  lonMin: Longitud minima presente dentro de la cuadricula
@@ -296,7 +433,7 @@ public class Controller {
 		// TODO Auto-generated method stub
 	}
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 1C:  Calcular un ï¿½rbol de expansiï¿½n mï¿½nima (MST) con criterio distancia, utilizando el algoritmo de Kruskal.
 	 */
@@ -305,7 +442,7 @@ public class Controller {
 
 	}
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 2C: Calcular un ï¿½rbol de expansiï¿½n mï¿½nima (MST) con criterio distancia, utilizando el algoritmo de Prim. (REQ 2C)
 	 */
@@ -314,7 +451,7 @@ public class Controller {
 
 	}
 
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 3C: Calcular los caminos de costo mï¿½nimo con criterio distancia que conecten los vï¿½rtices resultado
 	 * de la aproximaciï¿½n de las ubicaciones de la cuadricula N x M encontrados en el punto 5.
@@ -323,8 +460,8 @@ public class Controller {
 		// TODO Auto-generated method stub
 
 	}
-	
-	// TODO El tipo de retorno de los métodos puede ajustarse según la conveniencia
+
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 4C:Encontrar el camino mï¿½s corto para un viaje entre dos ubicaciones geogrï¿½ficas escogidas aleatoriamente al interior del grafo.
 	 * @param idVertice2 
