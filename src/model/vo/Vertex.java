@@ -1,6 +1,8 @@
 package model.vo;
 
-import model.data_structures.ArregloDinamico;
+import java.util.ArrayList;
+
+import model.data_structures.*;
 
 public class Vertex <K extends Comparable<K>,V extends Comparable<V> ,I extends Comparable<I>> implements Comparable<Vertex<K,V,I>>
 {
@@ -9,17 +11,22 @@ public class Vertex <K extends Comparable<K>,V extends Comparable<V> ,I extends 
 	private I infoEdge;
 	private ArregloDinamico<Edge<I>> adjEdges;
 	private Vertex<K, V, I> vertexTo; 
-	private int componente ;
-	private boolean marcado; 
-	
+	private ArrayList<Edge<I>> adj;
+	private boolean marcado;
 
 	public Vertex(K pId,V pInfo)
 	{
 		adjEdges=new  ArregloDinamico<Edge<I>>(10);
 		id=pId;
 		info=pInfo;
-		
+		adj=new ArrayList<Edge<I>>();
+
 	}	
+
+	public ArrayList<Edge<I>> getAdj()
+	{
+		return adj;
+	}
 
 	public ArregloDinamico<Edge<I>> getAdjEdges()
 	{
@@ -29,6 +36,7 @@ public class Vertex <K extends Comparable<K>,V extends Comparable<V> ,I extends 
 	public void addEdge(Edge<I> pArco)
 	{
 		adjEdges.agregar(pArco);
+		adj.add(pArco);
 	}
 
 	public I getInfoEdge()
@@ -58,7 +66,14 @@ public class Vertex <K extends Comparable<K>,V extends Comparable<V> ,I extends 
 	{
 		return vertexTo; 
 	}
-	
+	public void setMarca(boolean p)
+	{
+		marcado = p; 
+	}
+	public boolean getMark()
+	{
+		return marcado; 
+	}
 
 	@Override
 	public int compareTo(Vertex<K,V,I> o) 

@@ -61,7 +61,7 @@ public class Controller {
 				view.printMessage("Escoger el grafo a cargar: (1) Downtown  o (2)Ciudad Completa.");
 				int ruta = sc.nextInt();
 				if(ruta == 1)
-					RutaArchivo = ""; //TODO Dar la ruta del archivo de Downtown
+					RutaArchivo = "./data/archivoJSONDowntown.json"; //TODO Dar la ruta del archivo de Downtown
 				else
 					RutaArchivo = "./data/finalGraph.json"; //TODO Dar la ruta del archivo de la ciudad completa
 
@@ -70,7 +70,7 @@ public class Controller {
 				endTime = System.currentTimeMillis();
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
-				// TODO Informar el total de vértices y el total de arcos que definen el grafo cargado
+				// TODO Informar el total de vÃ©rtices y el total de arcos que definen el grafo cargado
 				break;
 
 
@@ -89,16 +89,16 @@ public class Controller {
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/* 
-				TODO Consola: Mostrar el camino a seguir con sus vértices (Id, Ubicación Geográfica),
-				el costo mínimo (menor cantidad de infracciones), y la distancia estimada (en Km).
+				TODO Consola: Mostrar el camino a seguir con sus vÃ©rtices (Id, UbicaciÃ³n GeogrÃ¡fica),
+				el costo mÃ­nimo (menor cantidad de infracciones), y la distancia estimada (en Km).
 
 				TODO Google Maps: Mostrar el camino resultante en Google Maps 
-				(incluyendo la ubicación de inicio y la ubicación de destino).
+				(incluyendo la ubicaciÃ³n de inicio y la ubicaciÃ³n de destino).
 				 */
 				break;
 
 			case 2:
-				view.printMessage("2A. Consultar los N v�rtices con mayor n�mero de infracciones. Ingrese el valor de N: ");
+				view.printMessage("2A. Consultar los N vï¿½rtices con mayor nï¿½mero de infracciones. Ingrese el valor de N: ");
 				int n = sc.nextInt();
 
 
@@ -109,12 +109,12 @@ public class Controller {
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/* 
 				TODO Consola: Mostrar la informacion de los n vertices 
-				(su identificador, su ubicación (latitud, longitud), y el total de infracciones) 
-				Mostra el número de componentes conectadas (subgrafos) y los  identificadores de sus vertices 
+				(su identificador, su ubicaciÃ³n (latitud, longitud), y el total de infracciones) 
+				Mostra el nÃºmero de componentes conectadas (subgrafos) y los  identificadores de sus vertices 
 
-				TODO Google Maps: Marcar la localización de los vértices resultantes en un mapa en
-				Google Maps usando un color 1. Destacar la componente conectada más grande (con
-				más vértices) usando un color 2. 
+				TODO Google Maps: Marcar la localizaciÃ³n de los vÃ©rtices resultantes en un mapa en
+				Google Maps usando un color 1. Destacar la componente conectada mÃ¡s grande (con
+				mÃ¡s vÃ©rtices) usando un color 2. 
 				 */
 				break;
 
@@ -134,45 +134,53 @@ public class Controller {
 
 				/*
 				   TODO Consola: Mostrar  el camino a seguir, informando
-					el total de vértices, sus vértices (Id, Ubicación Geográfica) y la distancia estimada (en Km).
+					el total de vÃ©rtices, sus vÃ©rtices (Id, UbicaciÃ³n GeogrÃ¡fica) y la distancia estimada (en Km).
 
 				   TODO Google Maps: Mostre el camino resultante en Google Maps (incluyendo la
-					ubicación de inicio y la ubicación de destino).
+					ubicaciÃ³n de inicio y la ubicaciÃ³n de destino).
 				 */
 				break;
 
 			case 4:		
+				
 				double lonMin;
 				double lonMax;
 				view.printMessage("Ingrese la longitud minima (Ej. -87,806): ");
 				lonMin = sc.nextDouble();
-				view.printMessage("Ingrese la longitud m�xima (Ej. -87,806): ");
+				view.printMessage("Ingrese la longitud mï¿½xima (Ej. -87,806): ");
 				lonMax = sc.nextDouble();
 
 				view.printMessage("Ingrese la latitud minima (Ej. 44,806): ");
 				double latMin = sc.nextDouble();
-				view.printMessage("Ingrese la latitud m�xima (Ej. 44,806): ");
+				view.printMessage("Ingrese la latitud mï¿½xima (Ej. 44,806): ");
 				double latMax = sc.nextDouble();
 
-				view.printMessage("Ingrese el n�mero de columnas");
+				view.printMessage("Ingrese el nï¿½mero de columnas");
 				int columnas = sc.nextInt();
-				view.printMessage("Ingrese el n�mero de filas");
+				view.printMessage("Ingrese el nï¿½mero de filas");
 				int filas = sc.nextInt();
 
 
 				startTime = System.currentTimeMillis();
-				definirCuadriculaB2(lonMin,lonMax,latMin,latMax,columnas,filas);
+				ArregloDinamico<Intersection> minimos = definirCuadriculaB2(lonMin,lonMax,latMin,latMax,columnas,filas);
 				endTime = System.currentTimeMillis();
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/*
-				   TODO Consola: Mostrar el número de vértices en el grafo
-					resultado de la aproximación. Mostar el identificador y la ubicación geográfica de cada
-					uno de estos vértices. 
+				   TODO Consola: Mostrar el nÃºmero de vÃ©rtices en el grafo
+					resultado de la aproximaciÃ³n. Mostar el identificador y la ubicaciÃ³n geogrÃ¡fica de cada
+					uno de estos vÃ©rtices. 
 
-				   TODO Google Maps: Marcar las ubicaciones de los vértices resultantes de la
-					aproximación de la cuadrícula en Google Maps.
+				   TODO Google Maps: Marcar las ubicaciones de los vÃ©rtices resultantes de la
+					aproximaciÃ³n de la cuadrÃ­cula en Google Maps.
 				 */
+				final Mapa example = new Mapa("Washington");
+
+				for(int k=0;k < minimos.darTamano();k++)
+				{
+					example.generateMarker(new LatLng(minimos.darElemento(k).getLat(),minimos.darElemento(k).getLon()));
+				}
+				
 				break;
 
 			case 5:
@@ -183,10 +191,10 @@ public class Controller {
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/*
-				   TODO Consola: Mostrar los vértices (identificadores), los arcos incluidos (Id vértice inicial e Id vértice
-					final), y el costo total (distancia en Km) del árbol.
+				   TODO Consola: Mostrar los vÃ©rtices (identificadores), los arcos incluidos (Id vÃ©rtice inicial e Id vÃ©rtice
+					final), y el costo total (distancia en Km) del Ã¡rbol.
 
-				   TODO Google Maps: Mostrar el árbol generado resultante en Google Maps: sus vértices y sus arcos.
+				   TODO Google Maps: Mostrar el Ã¡rbol generado resultante en Google Maps: sus vÃ©rtices y sus arcos.
 				 */
 
 				break;
@@ -199,10 +207,10 @@ public class Controller {
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/*
-				   TODO Consola: Mostrar los vértices (identificadores), los arcos incluidos (Id vértice inicial e Id vértice
-				 	final), y el costo total (distancia en Km) del árbol.
+				   TODO Consola: Mostrar los vÃ©rtices (identificadores), los arcos incluidos (Id vÃ©rtice inicial e Id vÃ©rtice
+				 	final), y el costo total (distancia en Km) del Ã¡rbol.
 
-				   TODO Google Maps: Mostrar el árbol generado resultante en Google Maps: sus vértices y sus arcos.
+				   TODO Google Maps: Mostrar el Ã¡rbol generado resultante en Google Maps: sus vÃ©rtices y sus arcos.
 				 */
 				break;
 
@@ -214,10 +222,10 @@ public class Controller {
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/*
-				   TODO Consola: Mostrar de cada camino resultante: su secuencia de vértices (identificadores) y su costo (distancia en Km).
+				   TODO Consola: Mostrar de cada camino resultante: su secuencia de vÃ©rtices (identificadores) y su costo (distancia en Km).
 
-				   TODO Google Maps: Mostrar los caminos de costo mínimo en Google Maps: sus vértices
-					y sus arcos. Destaque el camino más largo (en distancia) usando un color diferente
+				   TODO Google Maps: Mostrar los caminos de costo mÃ­nimo en Google Maps: sus vÃ©rtices
+					y sus arcos. Destaque el camino mÃ¡s largo (en distancia) usando un color diferente
 				 */
 				break;
 
@@ -233,10 +241,10 @@ public class Controller {
 				duration = endTime - startTime;
 				view.printMessage("Tiempo del requerimiento: " + duration + " milisegundos");
 				/*
-				   TODO Consola: Mostrar del camino resultante: su secuencia de vértices (identificadores), 
+				   TODO Consola: Mostrar del camino resultante: su secuencia de vÃ©rtices (identificadores), 
 				   el total de infracciones y la distancia calculada (en Km).
 
-				   TODO Google Maps: Mostrar  el camino resultante en Google Maps: sus vértices y sus arcos.	  */
+				   TODO Google Maps: Mostrar  el camino resultante en Google Maps: sus vÃ©rtices y sus arcos.	  */
 				break;
 
 			case 9: 	
@@ -248,7 +256,7 @@ public class Controller {
 	}
 
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 
 
 	/**
@@ -288,8 +296,8 @@ public class Controller {
 			{
 				if(grafo.getInfoArc(vActual.getId(), adyacente)==null)
 				{
-					Intersection I1=grafo.getInfoVertex(vActual.getId());
-					Intersection I2=grafo.getInfoVertex(adyacente);
+					Intersection I1 = grafo.getInfoVertex(vActual.getId());
+					Intersection I2 = grafo.getInfoVertex(adyacente);
 					grafo.addEdge(vActual.getId(),adyacente,new Way(Haversine.distance(I1.getLat(),I1.getLon(),I2.getLat(),I2.getLon())));
 				}
 			}
@@ -301,124 +309,58 @@ public class Controller {
 	private ColaPrioridad<Vertex<Long, Intersection, Way>> cola;
 
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
-	 * Requerimiento 1A: Encontrar el camino de costo m�nimo para un viaje entre dos ubicaciones geogr�ficas.
+	 * Requerimiento 1A: Encontrar el camino de costo mï¿½nimo para un viaje entre dos ubicaciones geogrï¿½ficas.
 	 * @param idVertice2 
 	 * @param idVertice1 
 	 */
-	public void caminoCostoMinimoA1(long idVertice1, long idVertice2) {
+	public void caminoCostoMinimoA1(long idVertice1, long idVertice2)
+	{
 		// TODO Auto-generated method stub
-		System.out.println(grafo.getInfoVertex(new Long(50251648)).getId());
-
-		edgeTo = new LinearHash<>(grafo.V());
-		verticesPunto = grafo.getVertex(); 
-
-		cola = new ColaPrioridad<>(new comparatorVertex());
-		disTo = new double[verticesPunto.darCapacidad()]; 
-		for(int i = 0; i <disTo.length; i++)
-		{
-			disTo[i] = Integer.MAX_VALUE; 
-		}
-		Vertex<Long, Intersection,Way > vertice = verticesPunto.get(idVertice1);
-		disTo[verticesPunto.getI(idVertice1)] = 0; 
-
-		cola.agregar(vertice);
-		while(!cola.esVacia())
-		{
-			Vertex<Long, Intersection, Way> v = cola.delMax();
-			ArregloDinamico<Edge<Way>> adyacentes = v.getAdjEdges();
-			for(int i = 0; i < adyacentes.darTamano(); i++)
-			{
-				relax(adyacentes.darElemento(i), v);
-			}
-
-		}	
-		Mapa mapa = new Mapa("Punto A1");
-		Vertex< Long, Intersection, Way> actual = verticesPunto.get(idVertice2); 
-		while(actual.getId() != vertice.getId())
-		{
-			Vertex<Long, Intersection, Way> v2; 
-			Edge<Way> arco = edgeTo.get(actual.getId()); 
-			if(actual.getId() == arco.getV1().getId())
-			{
-				v2 = arco.getV2();
-			}
-			else
-			{
-				v2 = arco.getV1();
-			}
-			mapa.generateCircle(new LatLng(actual.getInfo().getLat(), actual.getInfo().getLon()));
-			mapa.generateCircle(new LatLng(v2.getInfo().getLat(), v2.getInfo().getLon()));
-			Intersection uno = actual.getInfo(); 
-			Intersection dos = v2.getInfo();
-			mapa.generateSimplePath(new LatLng(uno.getLat(), uno.getLon()), new LatLng(dos.getLat(),dos.getLon()), false);
-
-		}
-
-
 	}
 
-	private void relax(Edge<Way> e, Vertex<Long, Intersection, Way> v)
-	{
-		Vertex<Long, Intersection, Way> w; 
-		if(e.getV1().equals(v))
-		{
-			w = e.getV2();
-		}
-		else
-		{
-			w = e.getV1(); 
-		}
-		if(disTo[verticesPunto.getI(w.getId())] > disTo[verticesPunto.getI(v.getId())] + v.getInfo().getInfractions().length)
-		{
-			disTo[verticesPunto.getI(w.getId())] = disTo[verticesPunto.getI(v.getId())] + v.getInfo().getInfractions().length;
-			edgeTo.put(w.getId(), e);
-			if(!cola.contains(w))
-			{
-				cola.agregar(w);
-			}
-
-		}
-	}
-	public class comparatorVertex implements Comparator<Vertex<Long, Intersection, Way>>
-	{
-
-		public int compare(Vertex<Long, Intersection, Way> o1, Vertex<Long, Intersection, Way> o2) {
-			// TODO Auto-generated method stub
-			return o1.getInfo().getInfractions().length - o2.getInfo().getAdj().length;
-		}
-
-	}
-
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia 
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia 
 	/**
-	 * Requerimiento 2A: Determinar los n v�rtices con mayor n�mero de infracciones. Adicionalmente identificar las
-	 * componentes conectadas (subgrafos) que se definan �nicamente entre estos n v�rtices
+	 * Requerimiento 2A: Determinar los n vï¿½rtices con mayor nï¿½mero de infracciones. Adicionalmente identificar las
+	 * componentes conectadas (subgrafos) que se definan ï¿½nicamente entre estos n vï¿½rtices
 	 * @param  int n: numero de vertices con mayor numero de infracciones  
 	 */
-	public void mayorNumeroVerticesA2(int n) {
-		LinearHash<Long, Vertex<Long, Intersection, Way>> tabla =   grafo.getVertex(); 
-		ArregloDinamico<Vertex<Long, Intersection, Way>> vertices = tabla.getValues();
-
-
+	public void mayorNumeroVerticesA2(int n)
+	{
 
 		// TODO Auto-generated method stub
 
 	}
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
-	 * Requerimiento 1B: Encontrar el camino m�s corto para un viaje entre dos ubicaciones geogr�ficas 
+	 * Requerimiento 1B: Encontrar el camino mï¿½s corto para un viaje entre dos ubicaciones geogrï¿½ficas 
 	 * @param idVertice2 
 	 * @param idVertice1 
 	 */
-	public void caminoLongitudMinimoaB1(int idVertice1, int idVertice2) {
+	public void caminoLongitudMinimoaB1(int idVertice1, int idVertice2)
+	{
 		// TODO Auto-generated method stub
+		BFS<Long> bfs=new BFS<Long>(grafo,(long)idVertice1);
+		ArregloDinamico <Long> arreglo = bfs.pathTo((long)idVertice2);
+		view.printMessage("Se obtuvieron: "+arreglo.darTamano()+" v�rtices");
 
+		double distEst=0.0;
+		final Mapa example = new Mapa("Washington");
+		for(int i=0;i<arreglo.darTamano()-1;i++)
+		{
+			Intersection actual = grafo.getInfoVertex(arreglo.darElemento(i));
+			Intersection siguiente=grafo.getInfoVertex(arreglo.darElemento(i+1));
+			view.printMessage("Id: "+actual.getId()+" Ubicaci�n geogr�fica ("+actual.getLon()+","+actual.getLat()+")");
+			distEst+=Haversine.distance(actual.getLat(), actual.getLon(), siguiente.getLat(), siguiente.getLon());
+			example.generateSimplePath(new LatLng(actual.getLat(),actual.getLon()), new LatLng(siguiente.getLat(),siguiente.getLon()), false);
+
+		}
+		view.printMessage("Distancia: "+distEst);
 	}
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
 	 * Requerimiento 2B:  Definir una cuadricula regular de N columnas por M filas. que incluya las longitudes y latitudes dadas
 	 * @param  lonMin: Longitud minima presente dentro de la cuadricula
@@ -428,46 +370,72 @@ public class Controller {
 	 * @param  columnas: Numero de columnas de la cuadricula
 	 * @param  filas: Numero de filas de la cuadricula
 	 */
-	public void definirCuadriculaB2(double lonMin, double lonMax, double latMin, double latMax, int columnas,
-			int filas) {
+	public ArregloDinamico<Intersection> definirCuadriculaB2(double lonMin, double lonMax, double latMin, double latMax, int columnas,
+			int filas)
+	{
 		// TODO Auto-generated method stub
+		ArregloDinamico<Intersection> minimos = new ArregloDinamico<Intersection>(filas*columnas);
+		for(double i= lonMin;i<lonMax;i+=(lonMax-lonMin)/filas)
+		{
+			for(double j=latMin;j<latMax;j+=(latMax-latMin)/columnas)
+			{
+				double minDist=Long.MAX_VALUE;
+				Intersection verMin=new Intersection();
+
+				for (int k =0;k<vertices.darTamano();k++)
+				{
+					Intersection vActual=grafo.getInfoVertex(vertices.darElemento(k));
+					if(Haversine.distance(j, i, vActual.getLat(), vActual.getLon())<minDist)
+					{
+						minDist=Haversine.distance(j, i, vActual.getLat(), vActual.getLon());
+						verMin=vActual;
+					}
+				}
+				minimos.agregar(verMin);
+			}
+		}
+		return minimos;
 	}
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
-	 * Requerimiento 1C:  Calcular un �rbol de expansi�n m�nima (MST) con criterio distancia, utilizando el algoritmo de Kruskal.
+	 * Requerimiento 1C:  Calcular un ï¿½rbol de expansiï¿½n mï¿½nima (MST) con criterio distancia, utilizando el algoritmo de Kruskal.
 	 */
-	public void arbolMSTKruskalC1() {
+	public void arbolMSTKruskalC1() 
+	{
 		// TODO Auto-generated method stub
 
 	}
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
-	 * Requerimiento 2C: Calcular un �rbol de expansi�n m�nima (MST) con criterio distancia, utilizando el algoritmo de Prim. (REQ 2C)
+	 * Requerimiento 2C: Calcular un ï¿½rbol de expansiï¿½n mï¿½nima (MST) con criterio distancia, utilizando el algoritmo de Prim. (REQ 2C)
 	 */
-	public void arbolMSTPrimC2() {
+	public void arbolMSTPrimC2() 
+	{
 		// TODO Auto-generated method stub
 
 	}
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
-	 * Requerimiento 3C: Calcular los caminos de costo m�nimo con criterio distancia que conecten los v�rtices resultado
-	 * de la aproximaci�n de las ubicaciones de la cuadricula N x M encontrados en el punto 5.
+	 * Requerimiento 3C: Calcular los caminos de costo mï¿½nimo con criterio distancia que conecten los vï¿½rtices resultado
+	 * de la aproximaciï¿½n de las ubicaciones de la cuadricula N x M encontrados en el punto 5.
 	 */
-	public void caminoCostoMinimoDijkstraC3() {
+	public void caminoCostoMinimoDijkstraC3()
+	{
 		// TODO Auto-generated method stub
 
 	}
 
-	// TODO El tipo de retorno de los m�todos puede ajustarse seg�n la conveniencia
+	// TODO El tipo de retorno de los mï¿½todos puede ajustarse segï¿½n la conveniencia
 	/**
-	 * Requerimiento 4C:Encontrar el camino m�s corto para un viaje entre dos ubicaciones geogr�ficas escogidas aleatoriamente al interior del grafo.
+	 * Requerimiento 4C:Encontrar el camino mï¿½s corto para un viaje entre dos ubicaciones geogrï¿½ficas escogidas aleatoriamente al interior del grafo.
 	 * @param idVertice2 
 	 * @param idVertice1 
 	 */
-	public void caminoMasCortoC4(int idVertice1, int idVertice2) {
+	public void caminoMasCortoC4(int idVertice1, int idVertice2) 
+	{
 		// TODO Auto-generated method stub
 
 	}

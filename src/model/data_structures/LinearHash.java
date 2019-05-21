@@ -151,7 +151,7 @@ public class LinearHash<K extends Comparable <K>,  V extends Comparable<V>> impl
 	}
 	public ArregloDinamico<V> getValues()
 	{
-		ArregloDinamico<V> retorno = new ArregloDinamico<>(900000);
+		ArregloDinamico<V> retorno = new ArregloDinamico<V>(900000);
      for(int i = 0; i < values.length; i++)
      {
     	 retorno.agregar(values[i]);

@@ -1,6 +1,11 @@
 package model.data_structures;
+import java.util.ArrayList;
+import java.util.Iterator;
 
-import model.vo.*;
+
+import model.data_structures.*;
+import model.vo.Edge;
+import model.vo.Vertex;
 
 public class Graph<K extends Comparable<K>,V extends Comparable<V>, I extends Comparable<I>> {
 
@@ -96,22 +101,21 @@ public class Graph<K extends Comparable<K>,V extends Comparable<V>, I extends Co
 		vertices.get(idVertex).update(infoVertex); 
 	}
 
-	public IteratorLista<K> adj(K idVertex)
-	{
-		Vertex<K, V,I> vertice = vertices.get(idVertex); 
-		ArregloDinamico<Edge<I>> arcos = vertice.getAdjEdges();
-		ArregloDinamico<K> verticesR = new ArregloDinamico<K>(100); 
-		for(int i = 0; i < arcos.darTamano(); i++)
+	
+
+	public Iterator adja(K idVertex) {
+		Vertex<K,V,I> vertice = (Vertex) vertices.get(idVertex);
+		Iterator<Edge<I>> it = (Iterator<Edge<I>>) vertice.getAdj().iterator();
+		ArrayList<K> arreglo = new ArrayList();
+		while (it.hasNext()) 
 		{
-			if(arcos.darElemento(i).getV1().equals(vertice))
-			{
-				verticesR.agregar((K) arcos.darElemento(i).getV2().getId());
-			}
+			Edge<I> arco = (Edge<I>) it.next();
+			if(arco.getV1()==vertice)
+				arreglo.add((K) arco.getV2().getId());
 			else
-			{
-				verticesR.agregar((K) arcos.darElemento(i).getV1().getId());
-			}
+				arreglo.add((K) arco.getV1().getId());
 		}
-		return verticesR.darIterator();
+
+		return arreglo.iterator();
 	}
 }
